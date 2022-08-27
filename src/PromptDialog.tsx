@@ -13,18 +13,23 @@ export const PromptDialog: FC<PromptProps> = (props) => {
   const [input, setInput] = useState(props.initialText)
   const { setPrompt } = useContext(PromptContext)
 
-  const onClose = () => {
+  const close = () => {
     setPrompt(null)
   }
 
-  const _onClickOK = () => {
+  const onCancel = () => {
+    props.callback(null)
+    close()
+  }
+
+  const onClickOK = () => {
     props.callback(input)
-    onClose()
+    close()
   }
 
   return (
-    <Dialog open={props !== null} onClose={onClose} maxWidth="xs">
-      <DialogTitle>{props?.title}</DialogTitle>
+    <Dialog open={true} onClose={onCancel} maxWidth="xs">
+      <DialogTitle>{props.title}</DialogTitle>
       <DialogContent>
         <TextField
           type="text"
@@ -33,21 +38,14 @@ export const PromptDialog: FC<PromptProps> = (props) => {
           autoFocus={true}
           onKeyPress={(e) => {
             if (e.key === "Enter") {
-              _onClickOK()
+              onClickOK()
             }
           }}
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={_onClickOK}>{props.okText ?? "OK"}</Button>
-        <Button
-          onClick={() => {
-            props?.callback(null)
-            onClose()
-          }}
-        >
-          {props.cancelText ?? "Cancel"}
-        </Button>
+        <Button onClick={onClickOK}>{props.okText ?? "OK"}</Button>
+        <Button onClick={onCancel}>{props.cancelText ?? "Cancel"}</Button>
       </DialogActions>
     </Dialog>
   )
